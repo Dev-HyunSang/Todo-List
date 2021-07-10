@@ -1,3 +1,3 @@
-module todo-list
+module github.com/Dev-HyunSang/Todo-List
 
 go 1.16
