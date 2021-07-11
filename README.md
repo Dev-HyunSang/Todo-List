@@ -2,6 +2,7 @@
 
 ## TODO:
 - [X] `/todo`: 새로운 TODO 리스트 추가하기 / POST
+    - [X] `/todo`: `index.html`를 통한 리스트 추가하기 / POST
 - [ ] `/todo`: TODO 리스트 출력하기 / GET
 - [ ] `/todo`: TODO 리스트 지우기 / PUT
 - [ ] `/todo`: TODO 리스트 수정 / DELETE
