@@ -4,9 +4,37 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TODO LIST</title>
+    <link rel="stylesheet" type="text/css" href="http://127.0.0.1:3000/public/main.css">
+    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 </head>
-<body>
-    hello
+<body onclick="send()">
+    <form id="form">
+        <input type="text" name="content" name="content" id="content" /> 
+        <input type="button" onclick="send()" value="call" />
+    </form>
 </body>
+<script>
+    function send() {
+        const formData = $("form").serialize();
+        const todo = document.getElementById('content').value
+
+        var data = {
+            "content": todo
+        }
+
+        $.ajax({
+            url: 'http://localhost:3000/todo',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function(data) {
+                console.log("전송 완료!")
+            },
+            error: function(xhr, status, err) {
+                console.log(xhr, status, err)
+            }
+        });
+        return false;
+    }
+</script>
 </html>
