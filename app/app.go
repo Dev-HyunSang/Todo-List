@@ -1,6 +1,9 @@
 package app
 
 import (
+	"encoding/json"
+	"fmt"
+	"html/template"
 	"net/http"
 	"time"
 
@@ -16,16 +19,41 @@ type ToDo struct {
 
 var (
 	todoMap map[int]*ToDo
+	lastID  int
 )
 
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
-	http.Redirect(w, r, "../public/todo.html", http.StatusTemporaryRedirect)
+	t, err := template.ParseFiles("public/index.html")
+	if err != nil {
+		panic(err)
+	}
+	t.Execute(w, nil)
+}
+func AddTodoListHandler(w http.ResponseWriter, r *http.Request) {
+	updateTodo := new(ToDo)
+	err := json.NewDecoder(r.Body).Decode(updateTodo)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprint(w, err)
+		return
+	}
+	updateTodo.ID = lastID
+	updateTodo.CreatedAt = time.Now()
+
+	w.Header().Add("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	data, _ := json.Marshal(updateTodo)
+	fmt.Fprint(w, string(data))
 }
 
 func NewHandler() http.Handler {
 	mux := mux.NewRouter()
+	fs := http.FileServer(http.Dir("./public/"))
 
-	mux.Handle("/static", http.FileServer(http.Dir("../public")))
 	mux.HandleFunc("/", IndexHandler).Methods("GET")
+	mux.HandleFunc("/todo", AddTodoListHandler).Methods("POST")
+
+	// Public => JS, CSS PathPrefix
+	mux.PathPrefix("/public/").Handler(http.StripPrefix("/public/", fs))
 	return mux
 }
