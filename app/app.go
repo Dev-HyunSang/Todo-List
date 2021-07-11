@@ -30,20 +30,21 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	t.Execute(w, nil)
 }
 func AddTodoListHandler(w http.ResponseWriter, r *http.Request) {
-	updateTodo := new(ToDo)
-	err := json.NewDecoder(r.Body).Decode(updateTodo)
+	AddTodo := new(ToDo)
+	err := json.NewDecoder(r.Body).Decode(AddTodo)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprint(w, err)
 		return
 	}
-	updateTodo.ID = lastID
-	updateTodo.CreatedAt = time.Now()
+	AddTodo.ID = lastID
+	AddTodo.CreatedAt = time.Now()
 
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	data, _ := json.Marshal(updateTodo)
+	data, _ := json.Marshal(AddTodo)
 	fmt.Fprint(w, string(data))
+	fmt.Println(string(data))
 }
 
 func NewHandler() http.Handler {
