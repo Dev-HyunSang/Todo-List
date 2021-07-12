@@ -4,10 +4,11 @@ Go를 이용한 Todo List을 개발 프로젝트입니다.
 ## ✨ TODO:
 - [X] `/todo`: 새로운 TODO 리스트 추가하기 / POST
     - [X] `/todo`: `index.html`를 통한 리스트 추가하기 / POST
-- [X] `/todo`: TODO 리스트 출력하기 / GET
+- [X] `/todo`: TODO 전체 리스트 출력하기 / GET
     - [ ] `/todo`: `index.html`를 통한 리스트 출력하기
-- [ ] `/todo`: TODO 리스트 지우기 / PUT
-- [X] `/todo`: TODO 리스트 수정 / DELETE
+- [X] `/todo/{id:[0-9]+}`: id 해당한 TODO 리스트 출력하기 / GET
+- [X] `/todo{id:[0-9]+}`: TODO 리스트 지우기 / DELETE
+- [] `/todo`: TODO 리스트 업데이트 / PUT
 
 
 ## 기능 
