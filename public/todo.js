@@ -14,7 +14,7 @@ function AddTodoListSend() {
     }
 
     $.ajax({
-        url: 'http://localhost:3000/todo',
+        url: '/todo',
         type: 'POST',
         contentType: 'application/json',
         data: JSON.stringify(data),
@@ -33,7 +33,7 @@ function GetTodoList() {
     const fragment = document.createDocumentFragment();
 
     $.ajax({
-        url: 'http://localhost:3000/todo',
+        url: '/todo',
         type: 'GET',
         contentType: 'application/json',
         success: function(todo) {
