@@ -4,18 +4,57 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="http://127.0.0.1:3000/public/main.css">
     <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 </head>
-<body onclick="send()">
-    <form id="form">
-        <input type="text" name="content" name="content" id="content" /> 
-        <input type="button" onclick="send()" value="call" />
-    </form>
+<style>
+    * {
+        padding: 0;
+        margin: 0;
+    }   
+    .main-container {
+        text-align: center;
+        margin-top: 10%;
+    }
+    #content, #btn{
+        border-radius: 20px;
+        border: 2px solid #000;
+        text-align: center;
+    }
+    #content {
+        width: 300px;
+        height: 40px;
+    }
+    #btn {
+        width: 50px;
+        height: 40px;
+    }
+    .todo-list {
+        margin-top: 20px;
+    }
+    .item-content {
+        font-size: 20px;
+        text-align: center;
+    }
+</style>
+<body onload="GetTodoList();">
+    <div class="main-container">
+        <form id="form">
+            <input type="text" name="content" id="content" /> 
+            <input type="button" value="call" onclick="AddTodoListSend()" id="btn"/>
+        </form>
+        <div class="todo-list" style="width: auto;">
+            <div id="items" style="width: auto;"></div>
+        </div>
+    </div>
 </body>
 <script>
-    function send() {
-        const formData = $("form").serialize();
+    $("#form").keypress(function(e) {
+        if (e.keyCode === 13) {
+            AddTodoListSend();
+        }
+    })
+
+    function AddTodoListSend() {
         const todo = document.getElementById('content').value
 
         var data = {
@@ -28,13 +67,44 @@
             contentType: 'application/json',
             data: JSON.stringify(data),
             success: function(data) {
-                console.log("전송 완료!")
+                console.log("전송 완료!");
+                location.reload();
             },
             error: function(xhr, status, err) {
-                console.log(xhr, status, err)
+                console.log(xhr, status, err);
             }
         });
         return false;
+    }
+    function GetTodoList() {
+        const parent = document.querySelector('#items')
+        const fragment = document.createDocumentFragment();
+
+        $.ajax({
+            url: 'http://localhost:3000/todo',
+            type: 'GET',
+            contentType: 'application/json',
+            success: function(todo) {
+                const Obj = JSON.parse(JSON.stringify(todo))
+                // 코드 정렬화 / id를 기준으로 함.
+                Obj.sort(function(a, b) {
+                    if (a.id < b.id) return -1;
+                    if (a.id > b.id) return 1;
+                    return 0;
+                });
+                // 출력
+                Obj.forEach((item) => {
+                    let li = document.createElement('li');
+                    li.innerHTML = `<p class="item-content">${item.Content}</p>`
+                    fragment.append(li)                    
+                });
+                parent.append(fragment)
+
+            },
+            error: function(err) {
+                console.error("오류 발생", err)
+            }
+        })
     }
 </script>
 </html>
