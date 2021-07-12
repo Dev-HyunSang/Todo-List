@@ -24,11 +24,27 @@ var (
 )
 
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
-	t, err := template.ParseFiles("public/index.tmpl")
+	t, err := template.ParseFiles("public/index.html")
 	if err != nil {
 		panic(err)
 	}
 	t.Execute(w, nil)
+}
+
+func TodosHandler(w http.ResponseWriter, r *http.Request) {
+	if len(todoMap) == 0 {
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprint(w, "No Users")
+		return
+	}
+	todos := []ToDo{}
+	for _, i := range todoMap {
+		todos = append(todos, i)
+	}
+	data, _ := json.Marshal(todos)
+	w.Header().Add("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprint(w, string(data))
 }
 
 func GetTodoListHandler(w http.ResponseWriter, r *http.Request) {
@@ -72,7 +88,7 @@ func AddTodoListHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 	data, _ := json.Marshal(todo)
 	fmt.Fprint(w, string(data))
-	fmt.Print(string(data))
+	fmt.Println(string(data))
 }
 
 func DeleteTodoHandler(w http.ResponseWriter, r *http.Request) {
@@ -99,6 +115,7 @@ func NewHandler() http.Handler {
 	fs := http.FileServer(http.Dir("./public/"))
 
 	mux.HandleFunc("/", IndexHandler).Methods("GET")
+	mux.HandleFunc("/todo", TodosHandler).Methods("GET")
 	mux.HandleFunc("/todo", AddTodoListHandler).Methods("POST")
 	mux.HandleFunc("/todo/{id:[0-9]+}", GetTodoListHandler).Methods("GET")
 	mux.HandleFunc("/todo/{id:[0-9]+}", DeleteTodoHandler).Methods("DELETE")
