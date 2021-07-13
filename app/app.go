@@ -34,7 +34,7 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 func TodosHandler(w http.ResponseWriter, r *http.Request) {
 	if len(todoMap) == 0 {
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprint(w, "No Users")
+		fmt.Fprint(w, "NO TODOS")
 		return
 	}
 	todos := []ToDo{}
@@ -59,7 +59,7 @@ func GetTodoListHandler(w http.ResponseWriter, r *http.Request) {
 	todo, ok := todoMap[id]
 	if !ok {
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprint(w, "No User Id:", id)
+		fmt.Fprint(w, "NO TODO ID:", id)
 		return
 	}
 
@@ -102,12 +102,33 @@ func DeleteTodoHandler(w http.ResponseWriter, r *http.Request) {
 	_, ok := todoMap[id]
 	if !ok {
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprint(w, "No User ID:", id)
+		fmt.Fprint(w, "NO TODO ID:", id)
 		return
 	}
 	delete(todoMap, id)
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprint(w, "Deleted User ID:", id)
+	fmt.Fprint(w, "DELETED TODO ID:", id)
+}
+
+func UpdateTodoListHandler(w http.ResponseWriter, r *http.Request) {
+	updateTodo := new(ToDo)
+	err := json.NewDecoder(r.Body).Decode(updateTodo)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprint(w, err)
+		return
+	}
+	todo, ok := todoMap[updateTodo.ID]
+	if !ok {
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprint(w, "NO TODO ID:", updateTodo.ID)
+		return
+	}
+
+	w.Header().Add("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	data, _ := json.Marshal(updateTodo)
+	fmt.Fprint(w, string(data))
 }
 
 func NewHandler() http.Handler {
@@ -117,6 +138,7 @@ func NewHandler() http.Handler {
 	mux.HandleFunc("/", IndexHandler).Methods("GET")
 	mux.HandleFunc("/todo", TodosHandler).Methods("GET")
 	mux.HandleFunc("/todo", AddTodoListHandler).Methods("POST")
+	// mux.HandleFunc("/todo").Methods("PUT")
 	mux.HandleFunc("/todo/{id:[0-9]+}", GetTodoListHandler).Methods("GET")
 	mux.HandleFunc("/todo/{id:[0-9]+}", DeleteTodoHandler).Methods("DELETE")
 
