@@ -90,23 +90,16 @@ func AddTodoListHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(string(data))
 }
 
-func DeleteTodoHandler(w http.ResponseWriter, r *http.Request) {
+func RemoveTodoListHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["id"])
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprint(w, err)
-		return
-	}
-	_, ok := todoMap[id]
-	if !ok {
+	id, _ := strconv.Atoi(vars["id"])
+	if _, ok := todoMap[id]; ok {
+		delete(todoMap, id)
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprint(w, "NO TODO ID:", id)
-		return
+		fmt.Fprint(w, "DLETET TODO LIST ID:", id)
+	} else {
+		w.WriteHeader(http.StatusBadRequest)
 	}
-	delete(todoMap, id)
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprint(w, "DELETED TODO ID:", id)
 }
 
 /* 본 함수는 ToDo struct에서의 Completed만을 다루는 함수입니다.
@@ -136,7 +129,6 @@ func UpdateStateTodoListHandler(w http.ResponseWriter, r *http.Request) {
 
 	todo.ID = id
 	todo.CreatedAt = time.Now()
-	todoMap[id] = *todo
 
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
@@ -154,7 +146,7 @@ func NewHandler() http.Handler {
 	mux.HandleFunc("/todo", AddTodoListHandler).Methods("POST")
 	mux.HandleFunc("/todo/completed/{id:[0-9]+}", UpdateStateTodoListHandler).Methods("PUT")
 	mux.HandleFunc("/todo/{id:[0-9]+}", GetTodoListHandler).Methods("GET")
-	mux.HandleFunc("/todo/{id:[0-9]+}", DeleteTodoHandler).Methods("DELETE")
+	mux.HandleFunc("/todo/{id:[0-9]+}", RemoveTodoListHandler).Methods("DELETE")
 
 	// Public => JS, CSS PathPrefix
 	mux.PathPrefix("/public/").Handler(http.StripPrefix("/public/", fs))
