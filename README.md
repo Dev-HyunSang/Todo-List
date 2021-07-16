@@ -75,8 +75,8 @@ todo에 추가된 항목들을 다 보여줍니다.
 
 ## 오류를 해결하기 위한 방법
 ### 많은 분들께서 도와 주셨습니다
-    - [코딩냄비 멤버분들](https://github.com/codingpot)
-    - [@snowmerak](https://github.com/snowmerak)
+- [코딩냄비 멤버분들](https://github.com/codingpot)
+- [@snowmerak](https://github.com/snowmerak)
     
 ### 오류 해결, 좋은 프로젝트를 만들기 위해서 읽은 자료들
 - [Go로 TodoList 만들기(1)](https://velog.io/@soosungp33/Go%EB%A1%9C-TodoList-%EB%A7%8C%EB%93%A4%EA%B8%B01)
