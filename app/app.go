@@ -70,7 +70,6 @@ func GetTodoListHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func AddTodoListHandler(w http.ResponseWriter, r *http.Request) {
-
 	todo := new(ToDo)
 	err := json.NewDecoder(r.Body).Decode(&todo)
 	if err != nil {
@@ -110,25 +109,40 @@ func DeleteTodoHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "DELETED TODO ID:", id)
 }
 
-func UpdateTodoListHandler(w http.ResponseWriter, r *http.Request) {
-	updateTodo := new(ToDo)
-	err := json.NewDecoder(r.Body).Decode(updateTodo)
+/* 본 함수는 ToDo struct에서의 Completed만을 다루는 함수입니다.
+상태 업데이트만을 다루는 함수입니다. */
+func UpdateStateTodoListHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprint(w, err)
 		return
 	}
-	todo, ok := todoMap[updateTodo.ID]
+	_, ok := todoMap[id]
 	if !ok {
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprint(w, "NO TODO ID:", updateTodo.ID)
+		fmt.Fprint(w, "NO TODO ID:", id)
 		return
 	}
 
+	todo := new(ToDo)
+	JsonErr := json.NewDecoder(r.Body).Decode(&todo)
+	if JsonErr != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprint(w, err)
+		return
+	}
+
+	todo.ID = id
+	todo.CreatedAt = time.Now()
+	todoMap[id] = *todo
+
 	w.Header().Add("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	data, _ := json.Marshal(updateTodo)
+	w.WriteHeader(http.StatusCreated)
+	data, _ := json.Marshal(todo)
 	fmt.Fprint(w, string(data))
+	fmt.Println(string(data))
 }
 
 func NewHandler() http.Handler {
@@ -138,7 +152,7 @@ func NewHandler() http.Handler {
 	mux.HandleFunc("/", IndexHandler).Methods("GET")
 	mux.HandleFunc("/todo", TodosHandler).Methods("GET")
 	mux.HandleFunc("/todo", AddTodoListHandler).Methods("POST")
-	// mux.HandleFunc("/todo").Methods("PUT")
+	mux.HandleFunc("/todo/completed/{id:[0-9]+}", UpdateStateTodoListHandler).Methods("PUT")
 	mux.HandleFunc("/todo/{id:[0-9]+}", GetTodoListHandler).Methods("GET")
 	mux.HandleFunc("/todo/{id:[0-9]+}", DeleteTodoHandler).Methods("DELETE")
 
