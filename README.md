@@ -11,8 +11,9 @@ Go를 이용한 Todo List을 개발 프로젝트입니다.
 - [X] `/todo/{id:[0-9]+}`: id 해당한 TODO 리스트 출력하기 / GET
 - [X] `/todo{id:[0-9]+}`: TODO 리스트 지우기 / DELETE
     - [ ] `index.html`: TODO 항목 프론트엔드에서 삭제 가능하도록 제작
-- [X] `/todo`: TODO 리스트 업데이트 / PUT | PUT 메소드를 처리하는 방법에 대해서 고민 중입니다.
-    - [X] `/todo/{id:[0-9]+}`: Bool형을 통해서 TODO 항목 상태 업데이트하도록 제작 / GET
+- [X] `/todo`: TODO 리스트 업데이트 / PUT 
+    - [X] `/todo/{id:[0-9]+}`: Bool형을 통해서 TODO 항목 상태 업데이트하도록 제작 / PUT
+    - [X] `/todo/{id:[0-9]+}`: TODOLIST Content 수정할 수 있도록 제작 / PUT
 
 ## 기능 
 무엇이 더 효과적으로 개발할 수 있고 가독성 좋은 API를 만들어야 하는지에 대해서 고민하고 있습니다.  
@@ -71,6 +72,14 @@ todo에 추가된 항목들을 다 보여줍니다.
         "created_at": "2021-07-12T18:57:17.899493+09:00"
     }
 ]
+```
+
+### TODO 리스트 삭제하기 / DLETET
+```json
+// Reqeust / DLETET http://localhost:3000/todo/1
+
+// Respone
+DLETET TODO LIST ID:1
 ```
 
 ## 오류를 해결하기 위한 방법
